@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import AddIcon from '@mui/icons-material/Add';
 import { TextField } from '@mui/material';
+import DialogForm from './dialog';
 
 export default function UploadButton() {
   const [open, setOpen] = React.useState(false);
@@ -31,7 +32,7 @@ export default function UploadButton() {
             {/* Render the MyDropzone component here */}
             {/* Include other components here */}
             <TextField label="Insert Your Name" variant="outlined" />
-            {/* You can add more components as needed */}
+            <DialogForm />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Close</Button>
