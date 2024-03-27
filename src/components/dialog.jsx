@@ -12,12 +12,12 @@ function DialogForm() {
   ));
 
   return (
-    <section className="container">
-      <div {...getRootProps({ className: 'dropzone' })}>
+    <section className="container" style={{ padding: '20px', border: '1px dashed #ccc' }}>
+      <div {...getRootProps({ className: 'dropzone', style: dropzoneStyles })}>
         <input {...getInputProps()} />
-        <p>Drag n drop some files here, or click to select files</p>
+        <p style={{ textAlign: 'center' }}>Drag n drop some files here, or click to select files</p>
       </div>
-      <aside>
+      <aside style={{ marginTop: '20px' }}>
         <ul>{files}</ul>
       </aside>
     </section>
@@ -25,4 +25,13 @@ function DialogForm() {
 }
 
 <DialogForm />;
+
+const dropzoneStyles = {
+  border: '2px dashed #007bff',
+  borderRadius: '4px',
+  padding: '20px',
+  textAlign: 'center',
+  cursor: 'pointer',
+};
+
 export default DialogForm;
