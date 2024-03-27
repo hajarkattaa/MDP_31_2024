@@ -2,6 +2,7 @@
 
 import './App.css';
 import NavBar from './components/navBar';
+import UploadButton from './components/uploadButton';
 import Dashboard from './pages/dashboard';
 import Landing from './pages/landing';
 import SignIn from './pages/signin';
@@ -16,6 +17,7 @@ function App() {
         <Route path="/signin" element={<SignIn></SignIn>}></Route>
         <Route path="/signup" element={<SignUp></SignUp>}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/uploadpage" element={<UploadButton />}></Route>
       </Routes>
     </Router>
   );

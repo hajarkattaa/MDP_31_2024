@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { Chip } from '@mui/material';
+import UploadButton from '../components/uploadButton';
 
 const columns = [
   { id: 'caseNumber', label: 'Case Number' },
@@ -53,6 +54,7 @@ export default function Dashboard() {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <UploadButton />
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
