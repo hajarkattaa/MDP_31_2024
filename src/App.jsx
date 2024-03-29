@@ -5,6 +5,7 @@ import NavBar from './components/navBar';
 import UploadButton from './components/uploadButton';
 import Dashboard from './pages/dashboard';
 import Landing from './pages/landing';
+import ResultPage from './pages/result';
 import SignIn from './pages/signin';
 import SignUp from './pages/signup';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<SignUp></SignUp>}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/uploadpage" element={<UploadButton />}></Route>
+        <Route path="/resultpage" element={<ResultPage />}></Route>
       </Routes>
     </Router>
   );
