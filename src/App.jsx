@@ -2,7 +2,7 @@
 
 import './App.css';
 import NavBar from './components/navBar';
-import UploadButton from './components/uploadButton';
+import UploadButton from './components/uploadCaseDialog';
 import Dashboard from './pages/dashboard';
 import Landing from './pages/landing';
 import ResultPage from './pages/result';
