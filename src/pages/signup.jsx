@@ -12,23 +12,34 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/footer';
-
+import { useAuth } from '../contexts/authContext';
+import { doCreateUserWithEmailAndPassword } from '../config/auth';
+import { Dashboard } from '@mui/icons-material';
+import { useState } from 'react';
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
+  const { userLoggedIn } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    if (!isSigningUp) {
+      setIsSigningUp(true);
+      await doCreateUserWithEmailAndPassword(email, password);
+    }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {userLoggedIn && <Dashboard to={`/dashboard`} replace={true} />}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

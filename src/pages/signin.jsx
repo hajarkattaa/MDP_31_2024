@@ -13,23 +13,43 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Footer from '../components/footer';
-
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../config/auth';
+import { useAuth } from '../contexts/authContext';
+import { useState } from 'react';
+import { Dashboard } from '@mui/icons-material';
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const { userLoggedIn } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      await doSignInWithEmailAndPassword(email, password);
+    }
+  };
+  const onGoogleSignIn = (event) => {
+    event.preventDefault();
+
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      doSignInWithGoogle().catch((err) => {
+        setIsSigningIn(false);
+      });
+    }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {userLoggedIn && <Dashboard to={`/dashboard`} replace={true} />}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -54,6 +74,8 @@ export default function SignIn() {
               id="email"
               label="Email Address"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               autoFocus
             />
@@ -62,6 +84,8 @@ export default function SignIn() {
               required
               fullWidth
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               label="Password"
               type="password"
               id="password"
