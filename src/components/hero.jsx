@@ -1,6 +1,9 @@
 import { Button, Grid, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Hero() {
+  const navigate = useNavigate(); //hook to navigate between pages
+
   return (
     <Grid
       container
@@ -19,7 +22,7 @@ function Hero() {
         </Typography>
         <Typography variant="h3">Empowering Healthcare Through AI</Typography>
         <br />
-        <Button variant="contained" color="primary" size="large">
+        <Button variant="contained" color="primary" size="large" onClick={() => navigate('/dashboard')}>
           Get Started
         </Button>
       </Grid>
