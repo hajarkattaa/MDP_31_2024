@@ -1,10 +1,13 @@
+import Footer from '../components/footer';
 import Hero from '../components/hero';
+import ContentSection from '../components/sections';
 
 function Landing() {
   return (
     <div>
-      <Hero></Hero>
-      <div>hajar is writing in the landing page</div>
+      <Hero />
+      <ContentSection />
+      <Footer />
     </div>
   );
 }

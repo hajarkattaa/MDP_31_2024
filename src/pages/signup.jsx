@@ -15,13 +15,14 @@ import Footer from '../components/footer';
 import { useAuth } from '../contexts/authContext';
 import { doCreateUserWithEmailAndPassword } from '../config/auth';
 import { Dashboard } from '@mui/icons-material';
-import { useState } from 'react';
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
+import { Fragment, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const { userLoggedIn } = useAuth();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
@@ -29,17 +30,30 @@ export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    try {
+      event.preventDefault();
+      setErrorMessage('');
 
-    if (!isSigningUp) {
-      setIsSigningUp(true);
-      await doCreateUserWithEmailAndPassword(email, password);
+      if (password !== confirmedPassword) {
+        setErrorMessage('Passwords do not match');
+        return;
+      }
+
+      if (!isSigningUp) {
+        setIsSigningUp(true);
+        await doCreateUserWithEmailAndPassword(email, password, { firstName, lastName });
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(error.message);
+    } finally {
+      setIsSigningUp(false);
     }
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      {userLoggedIn && <Dashboard to={`/dashboard`} replace={true} />}
+    <Fragment>
+      {userLoggedIn && <Navigate to={`/dashboard`} replace={true} />}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -66,6 +80,8 @@ export default function SignUp() {
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   autoFocus
                 />
               </Grid>
@@ -77,10 +93,21 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -91,6 +118,21 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmedPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmedPassword"
+                  autoComplete="new-password"
+                  value={confirmedPassword}
+                  onChange={(e) => setConfirmedPassword(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -100,20 +142,31 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={isSigningUp}>
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link
+                  variant="body2"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    navigate('/signin');
+                  }}
+                >
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
+        {errorMessage && (
+          <Typography variant="body2" color="error" align="center">
+            {errorMessage}
+          </Typography>
+        )}
         <Footer sx={{ mt: 5 }} />
       </Container>
-    </ThemeProvider>
+    </Fragment>
   );
 }

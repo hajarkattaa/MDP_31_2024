@@ -12,8 +12,12 @@ import UploadButton from '../components/uploadCaseDialog';
 import { getDatabase, onValue, ref } from 'firebase/database';
 import AddIcon from '@mui/icons-material/Add';
 import UploadCaseDialog from '../components/uploadCaseDialog';
+import { Navigate, generatePath, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/authContext';
+import STATUSES from '../constants/statuses';
 
-const getColorForResult = (result) => (result === 'positive' ? 'error' : result === 'negative' ? 'success' : 'warning');
+const getColorForResult = (result) =>
+  result === STATUSES.REJECTED ? 'error' : result === STATUSES.ACCEPTED ? 'success' : 'warning';
 
 const columns = [
   { id: 'caseNumber', label: 'Case Number' },
@@ -29,6 +33,8 @@ const columns = [
 ];
 
 export default function Dashboard() {
+  const { userLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [cases, setCases] = React.useState([]);
@@ -71,60 +77,73 @@ export default function Dashboard() {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <UploadButton />
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', '& button': { m: 1 } }}>
-        <Button variant="contained" size="large" startIcon={<AddIcon />} onClick={openDialog}>
-          New Case
-        </Button>
-      </Box>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {hasNoCases ? (
+    <React.Fragment>
+      {!userLoggedIn && <Navigate to={`/signin`} replace={true} />}
+
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <UploadButton />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', '& button': { m: 1 } }}>
+          <Button variant="contained" size="large" startIcon={<AddIcon />} onClick={openDialog}>
+            New Case
+          </Button>
+        </Box>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={columns.length} align="center">
-                  No cases found
-                </TableCell>
+                {columns.map((column) => (
+                  <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                    {column.label}
+                  </TableCell>
+                ))}
               </TableRow>
-            ) : (
-              cases.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.key}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format ? column.format(value) : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={cases.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-      <UploadCaseDialog open={isUploadDialogOpen} handleClose={closeDialog} />
-    </Paper>
+            </TableHead>
+            <TableBody>
+              {hasNoCases ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    No cases found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                cases.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.key}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        navigate(generatePath('/result/:caseNumber', { caseNumber: row.caseNumber }));
+                      }}
+                    >
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format ? column.format(value) : value}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={cases.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        <UploadCaseDialog open={isUploadDialogOpen} handleClose={closeDialog} />
+      </Paper>
+    </React.Fragment>
   );
 }

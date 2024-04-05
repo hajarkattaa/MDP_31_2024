@@ -15,11 +15,12 @@ function App() {
       <Router>
         <NavBar />
         <Routes>
-          <Route path="/" element={<Landing />}></Route>
+          <Route path="/home" element={<Landing />}></Route>
           <Route path="/signin" element={<SignIn></SignIn>}></Route>
           <Route path="/signup" element={<SignUp></SignUp>}></Route>
           <Route path="/dashboard" element={<Dashboard />}></Route>
-          <Route path="/resultpage" element={<ResultPage />}></Route>
+          <Route path="/result/:caseNumber" element={<ResultPage />}></Route>
+          <Route path="/" element={<Landing />}></Route>
         </Routes>
       </Router>
     </AuthProvider>
