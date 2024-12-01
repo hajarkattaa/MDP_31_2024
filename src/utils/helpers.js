@@ -14,5 +14,5 @@ export const generateCaseNumber = (patientInfo) => {
 
 export const isFormValid = (patientInfo, acceptedFiles) => {
   const { firstName, lastName, phoneNumber } = patientInfo;
-  return firstName && lastName && phoneNumber && acceptedFiles.length > 0;
+  return Boolean(firstName && lastName && phoneNumber && acceptedFiles.length > 0);
 };
